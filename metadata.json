@@ -1,0 +1,5 @@
+{
+  "name": "CanteenConnect",
+  "description": "A full-stack canteen food ordering system with real-time alerts, EcoCash payments, and feedback management.",
+  "requestFramePermissions": []
+}

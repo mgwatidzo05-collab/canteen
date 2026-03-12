@@ -1,0 +1,21 @@
+{
+  "name": "CanteenConnect",
+  "short_name": "Canteen",
+  "description": "Order meals from your canteen with ease.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#10b981",
+  "icons": [
+    {
+      "src": "https://picsum.photos/seed/canteen/192/192",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://picsum.photos/seed/canteen/512/512",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
