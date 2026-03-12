@@ -132,6 +132,8 @@ export default function App() {
   const [formerPassword, setFormerPassword] = useState('');
   const [newStaffPassword, setNewStaffPassword] = useState('');
   const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [showOrderSuccessModal, setShowOrderSuccessModal] = useState(false);
+  const [showMobileCart, setShowMobileCart] = useState(false);
 
   // PWA Install State
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
@@ -305,7 +307,7 @@ export default function App() {
         setPaymentProof(null);
         setTransactionId('');
         await fetchOrders();
-        alert('Order submitted successfully! Canteen staff will notify you when it is ready.');
+        setShowOrderSuccessModal(true);
       } else {
         const errorData = await res.json();
         alert(`Failed to submit order: ${errorData.error || 'Unknown error'}`);
@@ -591,7 +593,7 @@ export default function App() {
             </div>
           </nav>
 
-          <main className="max-w-7xl mx-auto p-6">
+          <main className="max-w-7xl mx-auto p-6 pb-24 md:pb-6">
             {portal === 'customer' ? (
               !currentUser ? (
                 <div className="max-w-2xl mx-auto mt-20 text-center">
@@ -789,7 +791,7 @@ export default function App() {
             </div>
 
             {/* Cart Section */}
-            <div className="lg:col-span-1">
+            <div id="cart-section" className="lg:col-span-1">
               <div className="sticky top-24 bg-white rounded-3xl border border-black/5 shadow-xl overflow-hidden">
                 <div className="p-6 bg-black text-white flex justify-between items-center">
                   <h2 className="text-xl font-bold flex items-center gap-2">
@@ -1501,6 +1503,63 @@ export default function App() {
               </form>
             </motion.div>
           </div>
+        )}
+      </AnimatePresence>
+
+      {/* Floating Mobile Cart Button */}
+      {portal === 'customer' && cart.length > 0 && (
+        <div className="fixed bottom-6 left-6 right-6 z-40 md:hidden">
+          <button 
+            onClick={() => {
+              const cartElement = document.getElementById('cart-section');
+              if (cartElement) {
+                cartElement.scrollIntoView({ behavior: 'smooth' });
+              }
+            }}
+            className="w-full bg-emerald-600 text-white py-4 rounded-2xl shadow-2xl flex items-center justify-between px-6 font-bold animate-bounce"
+          >
+            <div className="flex items-center gap-3">
+              <div className="bg-white/20 p-2 rounded-xl">
+                <ShoppingBag size={20} />
+              </div>
+              <span>View Cart ({cart.reduce((s, i) => s + i.quantity, 0)})</span>
+            </div>
+            <span>${cartTotal.toFixed(2)}</span>
+          </button>
+        </div>
+      )}
+
+      {/* Order Success Modal */}
+      <AnimatePresence>
+        {showOrderSuccessModal && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm"
+          >
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="bg-white w-full max-w-md rounded-[40px] p-10 text-center shadow-2xl relative overflow-hidden"
+            >
+              <div className="absolute top-0 left-0 right-0 h-2 bg-emerald-500" />
+              <div className="w-24 h-24 bg-emerald-100 rounded-[32px] flex items-center justify-center text-emerald-600 mx-auto mb-8">
+                <CheckCircle2 size={48} />
+              </div>
+              <h2 className="text-3xl font-black mb-4">Order Received!</h2>
+              <p className="text-black/40 mb-8 font-medium leading-relaxed">
+                Your order has been sent to the kitchen. We'll notify you here as soon as it's ready for collection!
+              </p>
+              <button 
+                onClick={() => setShowOrderSuccessModal(false)}
+                className="w-full py-5 rounded-2xl bg-emerald-600 text-white font-bold text-xl hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-600/20"
+              >
+                Great, thanks!
+              </button>
+            </motion.div>
+          </motion.div>
         )}
       </AnimatePresence>
       </>
