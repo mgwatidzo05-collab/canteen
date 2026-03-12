@@ -26,7 +26,8 @@ import {
   Trophy,
   Users,
   Ban,
-  Download
+  Download,
+  QrCode
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { clsx, type ClassValue } from 'clsx';
@@ -134,6 +135,7 @@ export default function App() {
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [showOrderSuccessModal, setShowOrderSuccessModal] = useState(false);
   const [showMobileCart, setShowMobileCart] = useState(false);
+  const [showQRModal, setShowQRModal] = useState(false);
 
   // PWA Install State
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
@@ -994,28 +996,44 @@ export default function App() {
                       <Star className="text-yellow-400 fill-yellow-400" size={24} />
                     </div>
                   </div>
-                  <div className="bg-white p-6 rounded-3xl border border-black/5 shadow-sm">
-                    <p className="text-sm font-bold text-black/40 uppercase mb-1">EcoCash Number</p>
-                    <div className="flex items-center justify-between">
+                  <div className="bg-white p-6 rounded-3xl border border-black/5 shadow-sm flex flex-col justify-between">
+                    <div>
+                      <p className="text-sm font-bold text-black/40 uppercase mb-1">Share App</p>
+                      <p className="text-xs text-black/30 font-medium mb-4">Let customers scan to order</p>
+                    </div>
+                    <button 
+                      onClick={() => setShowQRModal(true)}
+                      className="w-full py-3 rounded-xl bg-emerald-600 text-white font-bold flex items-center justify-center gap-2 hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-600/10"
+                    >
+                      <QrCode size={18} />
+                      Show QR Code
+                    </button>
+                  </div>
+                </div>
+
+                {/* Admin Settings Panel */}
+                <div className="bg-white p-8 rounded-3xl border border-black/5 shadow-sm grid grid-cols-1 md:grid-cols-3 gap-8">
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-bold flex items-center gap-2">
+                      <Smartphone size={20} className="text-emerald-600" />
+                      EcoCash Number
+                    </h3>
+                    <div className="flex items-center gap-2">
                       <input 
                         type="text" 
                         value={settings.ecocash_number}
                         onChange={(e) => updateSetting('ecocash_number', e.target.value)}
-                        className="text-xl font-black bg-transparent border-none outline-none w-full"
+                        className="w-full px-4 py-4 rounded-2xl border border-black/10 focus:border-emerald-500 outline-none transition-all font-bold"
                       />
                       <button 
                         onClick={() => setShowChangePasswordModal(true)}
-                        className="p-2 hover:bg-black/5 rounded-xl transition-colors text-black/40 hover:text-black"
+                        className="p-4 bg-black text-white rounded-2xl hover:bg-emerald-600 transition-all"
                         title="Change Portal Password"
                       >
                         <Lock size={20} />
                       </button>
                     </div>
                   </div>
-                </div>
-
-                {/* Admin Settings Panel */}
-                <div className="bg-white p-8 rounded-3xl border border-black/5 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="space-y-4">
                     <h3 className="text-lg font-bold flex items-center gap-2">
                       <Megaphone size={20} className="text-emerald-600" />
@@ -1560,6 +1578,64 @@ export default function App() {
               </button>
             </motion.div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* QR Code Modal */}
+      <AnimatePresence>
+        {showQRModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+            <motion.div 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              exit={{ opacity: 0 }} 
+              onClick={() => setShowQRModal(false)} 
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm" 
+            />
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }} 
+              animate={{ scale: 1, opacity: 1 }} 
+              exit={{ scale: 0.9, opacity: 0 }} 
+              className="relative bg-white w-full max-w-md rounded-[40px] shadow-2xl p-10 text-center"
+            >
+              <button 
+                onClick={() => setShowQRModal(false)} 
+                className="absolute top-6 right-6 text-black/20 hover:text-black p-2 hover:bg-black/5 rounded-full transition-all"
+              >
+                <X size={24} />
+              </button>
+              
+              <div className="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center text-emerald-600 mx-auto mb-6">
+                <QrCode size={32} />
+              </div>
+              
+              <h3 className="text-2xl font-black mb-2">Customer QR Code</h3>
+              <p className="text-black/40 text-sm font-medium mb-8">
+                Print this or show it to customers so they can scan and start ordering!
+              </p>
+              
+              <div className="bg-emerald-50 p-8 rounded-[32px] mb-8 flex justify-center border border-emerald-100">
+                <img 
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(window.location.origin)}`}
+                  alt="App QR Code"
+                  className="w-48 h-48 shadow-xl rounded-2xl"
+                />
+              </div>
+              
+              <div className="space-y-3">
+                <button 
+                  onClick={() => window.print()}
+                  className="w-full py-4 rounded-2xl bg-black text-white font-bold text-lg hover:bg-emerald-600 transition-all flex items-center justify-center gap-2"
+                >
+                  <Download size={20} />
+                  Print QR Code
+                </button>
+                <p className="text-[10px] text-black/30 font-bold uppercase tracking-widest">
+                  URL: {window.location.origin}
+                </p>
+              </div>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
       </>
