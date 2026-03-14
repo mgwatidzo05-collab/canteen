@@ -89,11 +89,13 @@ if (!orderTableInfo.map(c => c.name).includes('transaction_id')) {
 const mealCount = db.prepare('SELECT COUNT(*) as count FROM meals').get() as { count: number };
 if (mealCount.count === 0) {
   const insertMeal = db.prepare('INSERT INTO meals (name, description, price, category) VALUES (?, ?, ?, ?)');
-  insertMeal.run('Sadza & Beef Stew', 'Traditional Zimbabwean staple with tender beef stew', 5.00, 'Main');
-  insertMeal.run('Sadza & Chicken', 'Flame grilled chicken with sadza and greens', 4.50, 'Main');
-  insertMeal.run('Rice & Beans', 'Savory beans served with white rice', 3.50, 'Vegetarian');
-  insertMeal.run('Coke 300ml', 'Refreshing cold beverage', 1.00, 'Drinks');
-  insertMeal.run('Mazoe Orange', 'Classic Zimbabwean juice', 1.50, 'Drinks');
+  insertMeal.run('Sadza & Beef', 'Traditional Zimbabwean staple with tender beef stew', 1.50, 'Main');
+  insertMeal.run('Sadza & Chicken', 'Flame grilled chicken with sadza and greens', 1.50, 'Main');
+  insertMeal.run('Rice & Chicken', 'Savory chicken served with white rice', 1.50, 'Main');
+  insertMeal.run('Rice & Beef', 'Tender beef stew served with white rice', 1.50, 'Main');
+  insertMeal.run('Sadza & Beans', 'Savory beans served with sadza', 1.00, 'Vegetarian');
+  insertMeal.run('Pepsi 500ml', 'Refreshing cold beverage', 0.50, 'Drinks');
+  insertMeal.run('Fresh Chips', 'Hot and crispy potato chips', 1.00, 'Sides');
 }
 
 // Seed default settings
